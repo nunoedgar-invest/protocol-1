@@ -30,7 +30,6 @@ contract AssetBlacklist is CallOnIntegrationPostValidatePolicyBase, AddressListP
     /// @dev A fund's PolicyManager is always the sender
     function validateRule(bytes calldata _encodedArgs)
         external
-        view
         override
         onlyPolicyManager
         returns (bool)

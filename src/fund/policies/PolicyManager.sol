@@ -61,11 +61,11 @@ contract PolicyManager is IPolicyManager, Spoke {
         }
     }
 
-    function preValidatePolicy(PolicyHook _hook, bytes calldata _encodedArgs) external view override {
+    function preValidatePolicy(PolicyHook _hook, bytes calldata _encodedArgs) external override {
         __validatePolicy(_hook, PolicyHookExecutionTime.Pre, _encodedArgs);
     }
 
-    function postValidatePolicy(PolicyHook _hook, bytes calldata _encodedArgs) external view override {
+    function postValidatePolicy(PolicyHook _hook, bytes calldata _encodedArgs) external override {
         __validatePolicy(_hook, PolicyHookExecutionTime.Post, _encodedArgs);
     }
 
@@ -98,7 +98,6 @@ contract PolicyManager is IPolicyManager, Spoke {
         bytes memory _encodedArgs
     )
         private
-        view
     {
         address[] memory policies = getEnabledPolicies();
         for (uint i = 0; i < policies.length; i++) {

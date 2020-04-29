@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity 0.6.8;
 
-import "../dependencies/DSMath.sol";
-import "../dependencies/token/IERC20.sol";
-import "../integrations/interfaces/IKyberNetworkProxy.sol";
-import "../registry/IRegistry.sol";
+import "../../dependencies/DSMath.sol";
+import "../../dependencies/token/IERC20.sol";
+import "../../integrations/interfaces/IKyberNetworkProxy.sol";
+import "../../registry/IRegistry.sol";
 import "./IPriceSource.sol";
 
 

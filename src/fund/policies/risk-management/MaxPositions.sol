@@ -38,7 +38,6 @@ contract MaxPositions is CallOnIntegrationPostValidatePolicyBase {
     /// @dev A fund's PolicyManager is always the sender
     function validateRule(bytes calldata)
         external
-        view
         override
         onlyPolicyManager
         returns (bool)

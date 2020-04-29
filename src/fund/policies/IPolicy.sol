@@ -11,5 +11,5 @@ interface IPolicy {
     function policyHook() external view returns (IPolicyManager.PolicyHook);
     function policyHookExecutionTime() external view returns (IPolicyManager.PolicyHookExecutionTime);
     function updateFundSettings(bytes calldata) external;
-    function validateRule(bytes calldata) external view returns (bool);
+    function validateRule(bytes calldata) external returns (bool);
 }

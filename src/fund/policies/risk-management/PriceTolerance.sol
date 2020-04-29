@@ -48,7 +48,6 @@ contract PriceTolerance is DSMath, PolicyBase, CallOnIntegrationPostValidatePoli
     /// @dev A fund's PolicyManager is always the sender
     function validateRule(bytes calldata _encodedArgs)
         external
-        view
         override
         onlyPolicyManager
         returns (bool)
@@ -84,7 +83,6 @@ contract PriceTolerance is DSMath, PolicyBase, CallOnIntegrationPostValidatePoli
     /// relative the fund's denomination asset
     function __calcCumulativeAssetsValue(address[] memory _assets, uint256[] memory _amounts)
         private
-        view
         returns (uint256 cumulativeValue_)
     {
         address denominationAsset = Shares(__getShares()).DENOMINATION_ASSET();

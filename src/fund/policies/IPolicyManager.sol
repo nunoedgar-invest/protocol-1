@@ -9,8 +9,8 @@ interface IPolicyManager {
     enum PolicyHookExecutionTime { None, Pre, Post }
 
     function enablePolicies(address[] calldata, bytes[] calldata) external;
-    function postValidatePolicy(PolicyHook, bytes calldata) external view;
-    function preValidatePolicy(PolicyHook, bytes calldata) external view;
+    function postValidatePolicy(PolicyHook, bytes calldata) external;
+    function preValidatePolicy(PolicyHook, bytes calldata) external;
 }
 
 /// @title PolicyManagerFactory Interface
