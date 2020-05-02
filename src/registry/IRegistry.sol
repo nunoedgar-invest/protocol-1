@@ -26,6 +26,7 @@ interface IRegistry {
     function mlnToken() external view returns(address);
     function nativeAsset() external view returns(address);
     function owner() external view returns(address);
+    function policyIsRegistered(address) external view returns (bool);
     function priceSource() external view returns(address);
     function registerFund(address, address, bytes32) external;
     function sharesRequestor() external view returns(address);
