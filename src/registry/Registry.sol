@@ -2,10 +2,10 @@
 pragma solidity 0.6.8;
 pragma experimental ABIEncoderV2;
 
-import "../dependencies/DSAuth.sol";
 import "../dependencies/libs/EnumerableSet.sol";
 import "../fund/hub/ISpoke.sol";
 import "../dependencies/token/IERC20.sol";
+import "./utils/MelonCouncilOwnable.sol";
 
 /// @title Registry Contract
 /// @author Melon Council DAO <security@meloncoucil.io>
@@ -14,7 +14,7 @@ import "../dependencies/token/IERC20.sol";
 /// infrastructural contracts
 /// @dev This contract should be kept relatively abstract,
 /// so that it requires minimal changes as the protocol evolves
-contract Registry is DSAuth {
+contract Registry is MelonCouncilOwnable {
     using EnumerableSet for EnumerableSet.AddressSet;
 
     event AssetAdded (address asset);
@@ -83,24 +83,22 @@ contract Registry is DSAuth {
     address public fundFactory;
     uint256 public incentive;
     address public priceSource;
-    address public MGM;
     address public mlnToken;
     address public nativeAsset;
     address public sharesRequestor;
 
-    constructor(address _postDeployOwner) public {
+    constructor(address _MTC, address _MGM) public MelonCouncilOwnable(_MTC, _MGM) {
         incentive = 10 finney;
         integrationTypes.push("none");
         integrationTypes.push("trading");
         integrationTypes.push("lending");
-        setOwner(_postDeployOwner);
     }
 
     // ASSETS
 
     /// @notice Remove an asset from the list of registered assets
     /// @param _asset The address of the asset to remove
-    function deregisterAsset(address _asset) external auth {
+    function deregisterAsset(address _asset) external onlyOwner {
         require(assetIsRegistered(_asset), "deregisterAsset: _asset is not registered");
 
         EnumerableSet.remove(assets, _asset);
@@ -116,7 +114,7 @@ contract Registry is DSAuth {
 
     /// @notice Add an asset to the Registry
     /// @param _asset Address of asset to be registered
-    function registerAsset(address _asset) external auth {
+    function registerAsset(address _asset) external onlyOwner {
         require(!assetIsRegistered(_asset), "registerAsset: _asset already registered");
 
         EnumerableSet.add(assets, _asset);
@@ -129,7 +127,7 @@ contract Registry is DSAuth {
     /// @param _priceSource The address of the price source
     function registerDerivativePriceSource(address _derivative, address _priceSource)
         external
-        auth
+        onlyOwner
     {
         require(
             derivativeToPriceSource[_derivative] != _priceSource,
@@ -151,7 +149,7 @@ contract Registry is DSAuth {
 
     /// @notice Remove a fee from the list of registered fees
     /// @param _fee The address of the fee to remove
-    function deregisterFee(address _fee) external auth {
+    function deregisterFee(address _fee) external onlyOwner {
         require(feeIsRegistered(_fee), "deregisterFee: _fee is not registered");
 
         EnumerableSet.remove(fees, _fee);
@@ -167,7 +165,7 @@ contract Registry is DSAuth {
 
     /// @notice Add a fee to the Registry
     /// @param _fee Address of fee to be registered
-    function registerFee(address _fee) external auth {
+    function registerFee(address _fee) external onlyOwner {
         require(!feeIsRegistered(_fee), "registerFee: _fee already registered");
 
         EnumerableSet.add(fees, _fee);
@@ -202,7 +200,7 @@ contract Registry is DSAuth {
 
     /// @notice Remove a policy from the list of registered policies
     /// @param _policy The address of the policy to remove
-    function deregisterPolicy(address _policy) external auth {
+    function deregisterPolicy(address _policy) external onlyOwner {
         require(policyIsRegistered(_policy), "deregisterPolicy: _policy is not registered");
 
         EnumerableSet.remove(policies, _policy);
@@ -218,7 +216,7 @@ contract Registry is DSAuth {
 
     /// @notice Add a policy to the Registry
     /// @param _policy Address of policy to be registered
-    function registerPolicy(address _policy) external auth {
+    function registerPolicy(address _policy) external onlyOwner {
         require(!policyIsRegistered(_policy), "registerPolicy: _policy already registered");
 
         EnumerableSet.add(policies, _policy);
@@ -238,13 +236,13 @@ contract Registry is DSAuth {
     /// @notice Add an integration type to the Registry
     /// @dev Cannot remove integration types; used like an extendable enum
     /// @param _name Human-readable name for the integration type
-    function addIntegrationType(string calldata _name) external auth {
+    function addIntegrationType(string calldata _name) external onlyOwner {
         integrationTypes.push(_name);
     }
 
     /// @notice Remove an integration adapter from the Registry
     /// @param _adapter The address of the adapter to remove
-    function deregisterIntegrationAdapter(address _adapter) external auth {
+    function deregisterIntegrationAdapter(address _adapter) external onlyOwner {
         require(
             integrationAdapterIsRegistered(_adapter),
             "deregisterIntegrationAdapter: Adapter already disabled"
@@ -278,7 +276,7 @@ contract Registry is DSAuth {
         uint256 _typeIndex
     )
         external
-        auth
+        onlyOwner
     {
         require(
             _adapter != address(0),
@@ -314,7 +312,7 @@ contract Registry is DSAuth {
     /// @notice Update the human-readable name for an integration type
     /// @param _index The position index of the item in the integration types array
     /// @param _name The human-readable name string
-    function updateIntegrationTypeName(uint256 _index, string calldata _name) external auth {
+    function updateIntegrationTypeName(uint256 _index, string calldata _name) external onlyOwner {
         integrationTypes[_index] = _name;
     }
 
@@ -329,56 +327,49 @@ contract Registry is DSAuth {
 
     /// @notice Set the fundFactory storage var
     /// @param _fundFactory The FundFactory contract to set
-    function setFundFactory(address _fundFactory) external auth {
+    function setFundFactory(address _fundFactory) external onlyOwner {
         fundFactory = _fundFactory;
         emit FundFactoryChanged(_fundFactory);
     }
 
     /// @notice Set the incentive storage var
     /// @param _amount The amount to set for incentive (in wei)
-    function setIncentive(uint256 _amount) external auth {
+    function setIncentive(uint256 _amount) external onlyOwner {
         incentive = _amount;
         emit IncentiveChanged(_amount);
     }
 
     /// @notice Set the priceSource storage var
     /// @param _priceSource The PriceSource contract to set
-    function setPriceSource(address _priceSource) external auth {
+    function setPriceSource(address _priceSource) external onlyOwner {
         priceSource = _priceSource;
         emit PriceSourceChanged(_priceSource);
     }
 
     /// @notice Set the mlnToken storage var
     /// @param _mlnToken The MlnToken contract to set
-    function setMlnToken(address _mlnToken) external auth {
+    function setMlnToken(address _mlnToken) external onlyOwner {
         mlnToken = _mlnToken;
         emit MlnTokenChanged(_mlnToken);
     }
 
     /// @notice Set the nativeAsset storage var
     /// @param _nativeAsset The native asset contract to set
-    function setNativeAsset(address _nativeAsset) external auth {
+    function setNativeAsset(address _nativeAsset) external onlyOwner {
         nativeAsset = _nativeAsset;
         emit NativeAssetChanged(_nativeAsset);
     }
 
     /// @notice Set the engine storage var
     /// @param _engine The Engine contract to set
-    function setEngine(address _engine) external auth {
+    function setEngine(address _engine) external onlyOwner {
         engine = _engine;
         emit EngineChanged(_engine);
     }
 
-    /// @notice Set the MGM storage var
-    /// @param _MGM The MGM address to set
-    function setMGM(address _MGM) external auth {
-        MGM = _MGM;
-        emit MGMChanged(_MGM);
-    }
-
     /// @notice Set the sharesRequestor storage var
     /// @param _sharesRequestor The SharesRequestor contract to set
-    function setSharesRequestor(address _sharesRequestor) external auth {
+    function setSharesRequestor(address _sharesRequestor) external onlyOwner {
         sharesRequestor = _sharesRequestor;
         emit SharesRequestorChanged(_sharesRequestor);
     }
