@@ -24,7 +24,7 @@ const main = async input => {
   const policyManagerFactory = await nab('PolicyManagerFactory', [], melonAddrs);
   const sharesFactory = await nab('SharesFactory', [], melonAddrs);
   const vaultFactory = await nab('VaultFactory', [], melonAddrs);
-  const registry = await nab('Registry', [melonConf.registryOwner], melonAddrs);
+  const registry = await nab('Registry', [melonConf.registryOwner, melonConf.initialMGM], melonAddrs);
   const engine = await nab('Engine', [melonConf.engineDelay, registry.options.address], melonAddrs);
   const sharesRequestor = await nab('SharesRequestor', [registry.options.address], melonAddrs);
 
@@ -65,10 +65,6 @@ const main = async input => {
   const previousRegisteredEngine = await call(registry, 'engine');
   if (`${previousRegisteredEngine}`.toLowerCase() !== engine.options.address.toLowerCase()) {
     await send(registry, 'setEngine', [engine.options.address]);
-  }
-  const previousRegisteredMGM = await call(registry, 'MGM');
-  if (`${previousRegisteredMGM}`.toLowerCase() !== melonConf.initialMGM.toLowerCase()) {
-    await send(registry, 'setMGM', [melonConf.initialMGM]);
   }
   const previousRegisteredSharesRequestor = await call(registry, 'sharesRequestor');
   if (`${previousRegisteredSharesRequestor}`.toLowerCase() !== sharesRequestor.options.address.toLowerCase()) {
