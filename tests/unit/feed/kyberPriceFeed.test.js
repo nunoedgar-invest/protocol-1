@@ -42,7 +42,7 @@ beforeAll(async () => {
   conversionRates = contracts.ConversionRates;
   kyberNetworkProxy = contracts.KyberNetworkProxy;
 
-  registry = await deploy(CONTRACT_NAMES.REGISTRY, [deployer], deployerTxOpts);
+  registry = await deploy(CONTRACT_NAMES.REGISTRY, [deployer, deployer], deployerTxOpts);
 
   await send(registry, 'setNativeAsset', [weth.options.address], deployerTxOpts);
 
