@@ -1,5 +1,6 @@
 /// @notice Modified from DappHub (https://git.io/fpwrq)
 
+// SPDX-License-Identifier: GPL-3.0
 pragma solidity 0.6.8;
 
 abstract contract DSAuthority {
