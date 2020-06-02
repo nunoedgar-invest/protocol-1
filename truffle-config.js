@@ -18,9 +18,15 @@ module.exports = {
       host: "127.0.0.1",
       port: 8545,
       network_id: "*" // Match any network id
-    }
+    },
+    coverage: {
+      host: '127.0.0.1',
+      network_id: 1,
+      port: 9545,
+      gas: 0xfffffffffff,
+    },
   },
-  contracts_directory: './src',
+  contracts_directory: './.coverage_contracts',
   contracts_build_directory: './out',
   migrations_directory: './deploy/truffle'
 };
